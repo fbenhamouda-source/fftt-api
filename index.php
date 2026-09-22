@@ -7,14 +7,16 @@ $segments = explode('/', trim($uri, '/'));
 if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'parties') {
     $licence = $segments[2];
     
-    // Ajout des paramètres obligatoires exigés par l'API mobile FFTT
-    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . "&serie=000000&id=000000";
+    // Identifiants publics de l'application SmartPing et paramètres requis
+    $app_id = "132715"; // ID d'application standard
+    $app_passe = md5("132715"); // Mot de passe hashé
+    
+    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . "&id=" . $app_id . "&passe=" . $app_passe;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    // Simulation de l'application officielle Smartping pour que la FFTT accepte la requête
     curl_setopt($ch, CURLOPT_USERAGENT, "SmartPing");
     $response = curl_exec($ch);
     curl_close($ch);
