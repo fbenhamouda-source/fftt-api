@@ -8,14 +8,14 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     
     $app_id = "132715";
     $password = "hello";
-    $serie = "123456";
+    $serie = "000000";
     $tm = date('YmdHis');
     $cle = md5($tm . md5($password));
     
-    // Utilisation de 'licence' au lieu de 'numlic'
-    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?licence=" . $licence . 
-           "&serie=" . $serie . 
+    // Utilisation correcte de 'numlic' combinée aux paramètres de sécurité
+    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
            "&id=" . $app_id . 
+           "&serie=" . $serie . 
            "&tm=" . $tm . 
            "&cle=" . $cle;
     
@@ -23,7 +23,7 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_USERAGENT, "SmartPing iOS");
+    curl_setopt($ch, CURLOPT_USERAGENT, "SmartPing");
     $response = curl_exec($ch);
     curl_close($ch);
 
