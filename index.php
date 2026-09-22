@@ -1,6 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+// Forcer le fuseau horaire de Paris pour que l'horodatage FFTT soit exact
+date_default_timezone_set('Europe/Paris');
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $segments = explode('/', trim($uri, '/'));
 
@@ -26,16 +29,18 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     if ($response) {
         $xml = @simplexml_load_string($response);
         if ($xml) {
-            // S'il y a une erreur renvoyée par la FFTT, on l'affiche
-            if (isset($xml->erreur)) {
-                echo json_encode([["nom" => "Erreur FFTT", "prenom" => (string)$xml->erreur, "classement" => "", "vd" => "", "date" => ""]]);
-                exit;
+            $nodes = [];
+            if (isset($xml->resultat)) {
+                $nodes = $xml->resultat;
+            } elseif (isset($xml->partie)) {
+                $nodes = $xml->partie;
+            } elseif (isset($xml->ligne)) {
+                $nodes = $xml->ligne;
             }
-            
-            // Boucle universelle sur tous les éléments enfants du XML
-            foreach ($xml->children() as $p) {
+
+            foreach ($nodes as $p) {
                 $parties[] = [
-                    "nom" => (string)($p->nom ?? $p->advnom ?? $p->adversaire ?? 'Adversaire'),
+                    "nom" => (string)($p->nom ?? $p->advnom ?? 'Adversaire'),
                     "prenom" => (string)($p->prenom ?? $p->advprenom ?? ''),
                     "classement" => (string)($p->classement ?? $p->advclassement ?? '500'),
                     "vd" => (string)($p->vd ?? $p->victoire ?? ''),
