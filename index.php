@@ -12,13 +12,14 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     $tm = date('YmdHis');
     $cle = md5($tm . md5($password));
     
-    // On envoie à la fois 'id' et 'identifiant', ainsi que toutes les variantes possibles
+    // On transmet l'ensemble des variantes de paramètres de sécurité attendues par l'API
     $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
            "&id=" . $app_id . 
-           "&identifiant=" . $app_id . 
            "&serie=" . $serie . 
            "&tm=" . $tm . 
-           "&cle=" . $cle;
+           "&cle=" . $cle . 
+           "&pass=" . $password . 
+           "&passe=" . md5($password);
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
