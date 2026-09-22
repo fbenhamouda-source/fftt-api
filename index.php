@@ -9,17 +9,19 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     $app_id = "132715";
     $password = "hello";
     $serie = "000000";
+    
+    // Génération des horodatages exigés par l'API v2
     $tm = date('YmdHis');
+    $tmc = md5($tm . md5($password));
     $cle = md5($tm . md5($password));
     
-    // On transmet l'ensemble des variantes de paramètres de sécurité attendues par l'API
+    // URL complète avec tmc et les paramètres requis
     $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
            "&id=" . $app_id . 
            "&serie=" . $serie . 
            "&tm=" . $tm . 
-           "&cle=" . $cle . 
-           "&pass=" . $password . 
-           "&passe=" . md5($password);
+           "&tmc=" . $tmc . 
+           "&cle=" . $cle;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
