@@ -1,7 +1,5 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-
-// Forcer le fuseau horaire de Paris pour que l'horodatage FFTT soit exact
 date_default_timezone_set('Europe/Paris');
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -29,6 +27,7 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     if ($response) {
         $xml = @simplexml_load_string($response);
         if ($xml) {
+            // Recherche ciblée de toutes les structures de parties possibles de la FFTT
             $nodes = [];
             if (isset($xml->resultat)) {
                 $nodes = $xml->resultat;
