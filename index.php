@@ -1,7 +1,5 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
 date_default_timezone_set('Europe/Paris');
-
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $segments = explode('/', trim($uri, '/'));
 
@@ -23,29 +21,9 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     $response = curl_exec($ch);
     curl_close($ch);
 
-    $parties = [];
-    if ($response) {
-        $xml = @simplexml_load_string($response);
-        if ($xml) {
-            // Recherche universelle par XPath de toutes les balises de matchs possibles dans le XML
-            $nodes = $xml->xpath('//partie | //resultat | //ligne');
-            
-            if ($nodes) {
-                foreach ($nodes as $p) {
-                    $parties[] = [
-                        "nom" => (string)($p->nom ?? $p->advnom ?? $p->adversaire ?? 'Adversaire'),
-                        "prenom" => (string)($p->prenom ?? $p->advprenom ?? ''),
-                        "classement" => (string)($p->classement ?? $p->advclassement ?? '500'),
-                        "vd" => (string)($p->vd ?? $p->victoire ?? ''),
-                        "date" => (string)($p->date ?? '')
-                    ];
-                }
-            }
-        }
-    }
-    
-    echo json_encode($parties);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "REPONSE BRUTE DE LA FFTT :\n" . $response;
     exit;
 }
 
-echo json_encode([]);
+echo "Route non trouvée";
