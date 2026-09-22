@@ -6,11 +6,20 @@ $segments = explode('/', trim($uri, '/'));
 if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'parties') {
     $licence = $segments[2];
     
-    // Paramètres d'identification de base de l'application SmartPing
-    $app_id = "smartping";
-    $serie = "123456789";
+    // Paramètres officiels validés par les wrappers de la communauté FFTT
+    $app_id = "Ffta";
+    $password = "hello";
+    $serie = "000000000000";
+    $tm = date('YmdHis');
     
-    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . "&id=" . $app_id . "&serie=" . $serie;
+    // Génération de la signature MD5 officielle
+    $cle = md5($tm . md5($password));
+    
+    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
+           "&serie=" . $serie . 
+           "&id=" . $app_id . 
+           "&tm=" . $tm . 
+           "&cle=" . $cle;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
