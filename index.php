@@ -10,8 +10,13 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     $password = "hello";
     $tm = date('YmdHis');
     $cle = md5($tm . md5($password));
+    $passe_md5 = md5($password);
     
-    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . "&serie=000000&id=" . $app_id . "&tm=" . $tm . "&cle=" . $cle;
+    // On combine TOUTES les variantes de paramètres acceptées par les différents scripts de la FFTT
+    $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
+           "&serie=000000&id=" . $app_id . 
+           "&tm=" . $tm . "&cle=" . $cle . 
+           "&passe=" . $passe_md5;
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
