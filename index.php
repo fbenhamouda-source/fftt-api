@@ -6,7 +6,6 @@ $segments = explode('/', trim($uri, '/'));
 
 if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'parties') {
     $licence = $segments[2];
-    // Correction du paramètre : numlic au lieu de licence
     $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence;
     
     $ch = curl_init();
@@ -20,14 +19,22 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     if ($response) {
         $xml = @simplexml_load_string($response);
         if ($xml) {
-            // Lecture des balises resultat ou partie renvoyées par l'API
-            $nodes = isset($xml->resultat) ? $xml->resultat : ($xml->partie ?? []);
+            // Recherche universelle de toutes les balises possibles de parties/résultats
+            $nodes = [];
+            if (isset($xml->resultat)) {
+                $nodes = $xml->resultat;
+            } elseif (isset($xml->partie)) {
+                $nodes = $xml->partie;
+            } elseif (isset($xml->ligne)) {
+                $nodes = $xml->ligne;
+            }
+
             foreach ($nodes as $p) {
                 $parties[] = [
-                    "nom" => (string)($p->nom ?? $p->advnom ?? ''),
+                    "nom" => (string)($p->nom ?? $p->advnom ?? 'Adversaire'),
                     "prenom" => (string)($p->prenom ?? $p->advprenom ?? ''),
                     "classement" => (string)($p->classement ?? $p->advclassement ?? '500'),
-                    "vd" => (string)($p->vd ?? ''),
+                    "vd" => (string)($p->vd ?? $p->victoire ?? ''),
                     "date" => (string)($p->date ?? '')
                 ];
             }
