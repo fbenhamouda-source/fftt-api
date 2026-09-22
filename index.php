@@ -27,24 +27,19 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     if ($response) {
         $xml = @simplexml_load_string($response);
         if ($xml) {
-            // Recherche ciblée de toutes les structures de parties possibles de la FFTT
-            $nodes = [];
-            if (isset($xml->resultat)) {
-                $nodes = $xml->resultat;
-            } elseif (isset($xml->partie)) {
-                $nodes = $xml->partie;
-            } elseif (isset($xml->ligne)) {
-                $nodes = $xml->ligne;
-            }
-
-            foreach ($nodes as $p) {
-                $parties[] = [
-                    "nom" => (string)($p->nom ?? $p->advnom ?? 'Adversaire'),
-                    "prenom" => (string)($p->prenom ?? $p->advprenom ?? ''),
-                    "classement" => (string)($p->classement ?? $p->advclassement ?? '500'),
-                    "vd" => (string)($p->vd ?? $p->victoire ?? ''),
-                    "date" => (string)($p->date ?? '')
-                ];
+            // Recherche universelle par XPath de toutes les balises de matchs possibles dans le XML
+            $nodes = $xml->xpath('//partie | //resultat | //ligne');
+            
+            if ($nodes) {
+                foreach ($nodes as $p) {
+                    $parties[] = [
+                        "nom" => (string)($p->nom ?? $p->advnom ?? $p->adversaire ?? 'Adversaire'),
+                        "prenom" => (string)($p->prenom ?? $p->advprenom ?? ''),
+                        "classement" => (string)($p->classement ?? $p->advclassement ?? '500'),
+                        "vd" => (string)($p->vd ?? $p->victoire ?? ''),
+                        "date" => (string)($p->date ?? '')
+                    ];
+                }
             }
         }
     }
