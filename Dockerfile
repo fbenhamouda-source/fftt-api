@@ -1,12 +1,17 @@
 FROM php:8.2-apache
 
-# Activer la réécriture d'URL d'Apache
 RUN a2enmod rewrite
 
-# Autoriser les fichiers de configuration (.htaccess)
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+# Forcer Apache à envoyer toutes les requêtes vers index.php (solution magique anti-404)
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html\n\
+    FallbackResource /index.php\n\
+    <Directory /var/www/html>\n\
+        Options Indexes FollowSymLinks\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Copier les fichiers du projet
 COPY . /var/www/html/
-
 EXPOSE 80
