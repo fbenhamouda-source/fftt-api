@@ -12,9 +12,10 @@ if (count($segments) >= 4 && $segments[1] === 'joueur' && $segments[3] === 'part
     $tm = date('YmdHis');
     $cle = md5($tm . md5($password));
     
-    // Utilisation correcte de 'numlic' combinée aux paramètres de sécurité
+    // On envoie à la fois 'id' et 'identifiant', ainsi que toutes les variantes possibles
     $url = "https://apiv2.fftt.com/mobile/pxml/xml_partie.php?numlic=" . $licence . 
            "&id=" . $app_id . 
+           "&identifiant=" . $app_id . 
            "&serie=" . $serie . 
            "&tm=" . $tm . 
            "&cle=" . $cle;
